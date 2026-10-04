@@ -1,0 +1,10 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import AppNav from '../components/AppNav';
+export default function ProgramsPage(){
+ const [products,setProducts]=useState([]),[error,setError]=useState(''),[busy,setBusy]=useState(null);const user=useSelector(s=>s.session.user);const navigate=useNavigate();const [params]=useSearchParams();const selected=params.get('plan');
+ useEffect(()=>{fetch('/api/products',{credentials:'include'}).then(r=>r.json()).then(d=>setProducts(d.products||[])).catch(()=>setError('Could not load programs.'))},[user]);
+ async function checkout(product){if(!user){navigate('/login');return}setBusy(product.id);setError('');const res=await fetch(`/api/checkout/${product.id}`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'}});const data=await res.json();setBusy(null);if(!res.ok){setError(data.message||'Checkout failed');return}if(data.alreadyOwned){navigate('/account');return}location.href=data.url;}
+ return <div className="app-page"><AppNav/><main className="app-main"><p className="eyebrow">PROGRAMS & COACHING</p><h1>Choose how you want to train.</h1><p className="muted">The same Sharp Fitness options shown on the main site, now connected to your client account.</p>{error&&<div className="notice error">{error}</div>}<div className="product-grid">{products.map(p=><article key={p.id} className="product-card" style={selected===p.slug?{outline:'2px solid #e0505f'}:undefined}><h2>{p.name}</h2><p className="muted">{p.description}</p>{p.accessLabel&&<p className="access-copy">{p.accessLabel}</p>}<div className="spacer"/><div className="price">${(p.priceCents/100).toFixed(0)}{p.billingType==='monthly'&&<small style={{fontSize:'1rem'}}> / month</small>}</div><button className="app-btn" disabled={busy===p.id||p.owned} onClick={()=>checkout(p)}>{p.owned?'Already in your account':busy===p.id?'Opening checkout…':user?'Purchase securely':'Log in to purchase'}</button></article>)}</div></main></div>
+}

@@ -1,0 +1,39 @@
+{
+  "name": "sharp-fitness-backend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo:all": "sequelize-cli db:migrate:undo:all",
+    "sequelize": "sequelize",
+    "sequelize-cli": "sequelize-cli",
+    "seed:products": "node ./db/seed-products.js",
+    "start": "per-env",
+    "start:development": "nodemon ./bin/www",
+    "start:production": "npm run db:migrate && npm run seed:products && npm run ensure:trainer && node ./bin/www",
+    "ensure:trainer": "node ./db/ensure-trainer.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "per-env": "^1.0.2",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "stripe": "^17.5.0",
+    "@aws-sdk/client-s3": "^3.744.0",
+    "@aws-sdk/s3-request-presigner": "^3.744.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "sqlite3": "^5.1.7"
+  }
+}

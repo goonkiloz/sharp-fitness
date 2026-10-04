@@ -1,0 +1,16 @@
+{
+  "name": "sharp-fitness",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "npm --prefix backend install && npm --prefix frontend install",
+    "dev:backend": "npm --prefix backend run start:development",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start": "npm --prefix backend start",
+    "build": "npm --prefix frontend run build",
+    "db:migrate": "npm --prefix backend run db:migrate",
+    "db:migrate:undo:all": "npm --prefix backend run db:migrate:undo:all",
+    "ensure:trainer": "npm --prefix backend run ensure:trainer"
+  },
+  "license": "ISC"
+}

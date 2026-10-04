@@ -1,0 +1,1 @@
+import { Link } from 'react-router-dom';import AppNav from '../components/AppNav';export default function NotFoundPage(){return <div className="app-page"><AppNav/><main className="app-main"><p className="eyebrow">404</p><h1>Page not found.</h1><Link className="app-btn" to="/">Back to Sharp Fitness</Link></main></div>}
