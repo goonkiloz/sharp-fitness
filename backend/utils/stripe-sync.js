@@ -107,6 +107,20 @@ async function syncStripeSubscription(subscription, stripeInstance = null) {
   }
 
   const item = fullSubscription.items?.data?.[0];
+
+  const periodEndSeconds =
+    item?.current_period_end ||
+    fullSubscription.current_period_end ||
+    null;
+
+  const currentPeriodEnd = periodEndSeconds
+    ? new Date(Number(periodEndSeconds) * 1000)
+    : null;
+
+  const cancelAt = fullSubscription.cancel_at
+    ? new Date(Number(fullSubscription.cancel_at) * 1000)
+    : null;
+
   if (!item) return null;
 
   const product = await resolveLocalProduct(stripe, item, fullSubscription);
@@ -126,7 +140,12 @@ async function syncStripeSubscription(subscription, stripeInstance = null) {
     amountCents: Number(item.price.unit_amount ?? product.priceCents),
     status,
     purchasedAt,
-    serviceEndsAt: null
+    serviceEndsAt: null,
+    currentPeriodEnd,
+    cancelAtPeriodEnd: Boolean(
+      fullSubscription.cancel_at_period_end
+    ),
+    cancelAt
   };
 
   let purchase = await Purchase.findOne({
@@ -206,8 +225,7 @@ async function syncStripeCustomerSubscriptions(user, stripeInstance = null) {
         limit: 100,
         ...(startingAfter
           ? { starting_after: startingAfter }
-          : {}),
-        expand: ['data.items.data.price.product']
+          : {})
       });
 
       if (page.data.length) {

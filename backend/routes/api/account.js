@@ -1,7 +1,7 @@
 const express = require('express');
 const { Purchase, Product, ClientFile } = require('../../db/models');
 const { requireAuth, safeUser } = require('../../utils/auth');
-const { syncStripeCustomerSubscriptions } = require('../../utils/stripe-sync');
+const { getStripe, syncStripeCustomerSubscriptions } = require('../../utils/stripe-sync');
 const router = express.Router();
 
 function collapsePurchases(purchases) {
@@ -36,6 +36,21 @@ function collapsePurchases(purchases) {
   );
 }
 
+function appUrl(req) {
+  if (process.env.APP_URL) {
+    return process.env.APP_URL.replace(/\/$/, '');
+  }
+
+  if (process.env.RENDER_EXTERNAL_HOSTNAME) {
+    return `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`;
+  }
+
+  return `${req.protocol}://${req.get('host')}`.replace(
+    ':8000',
+    ':3000'
+  );
+}
+
 router.get('/', requireAuth, async (req, res) => {
   try {
     await syncStripeCustomerSubscriptions(req.user);
@@ -58,8 +73,44 @@ router.get('/', requireAuth, async (req, res) => {
   res.json({
     user: safeUser(req.user),
     purchases: collapsePurchases(purchases),
-    files
+    files,
+    canManageBilling: Boolean(req.user.stripeCustomerId)
   });
+});
+
+router.post('/portal', requireAuth, async (req, res, next) => {
+  try {
+    const stripe = getStripe();
+
+    if (!stripe) {
+      const err = new Error('Stripe is not configured.');
+      err.status = 503;
+      throw err;
+    }
+
+    // Make sure a Stripe customer created manually by Cody
+    // is linked to this website account first.
+    await syncStripeCustomerSubscriptions(req.user, stripe);
+
+    if (!req.user.stripeCustomerId) {
+      const err = new Error(
+        'No Stripe billing account is connected to this account yet.'
+      );
+      err.status = 400;
+      throw err;
+    }
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: req.user.stripeCustomerId,
+      return_url: `${appUrl(req)}/account`
+    });
+
+    res.json({
+      url: session.url
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
