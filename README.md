@@ -1,101 +1,406 @@
-# Sharp Fitness Full-Stack Website
+# Sharp Fitness
 
-A React + Vite / Express / Sequelize / PostgreSQL site based on the original Sharp Fitness landing page, with Stripe-backed paid access and a private trainer/client portal.
+Production full-stack website and client management platform built for **Sharp Fitness**, a personal training business offering online coaching, personalized workout and nutrition programs, and one-on-one coaching.
 
-## What changed for the personalized coaching workflow
+**Live Site:** https://sharpfitness.live/
 
-- Cody has a trainer/admin role and `/trainer` dashboard.
-- Client accounts show only files assigned to that client.
-- Cody can upload videos, PDFs, Word docs, spreadsheets, images, etc. to a paid client.
-- Uploads go directly from Cody's browser to private S3 storage through a short-lived signed URL, so large videos do not pass through the Render server.
-- Clients receive only short-lived signed viewing/download links and must be logged in with an active paid purchase.
-- Consultation requests are saved in PostgreSQL before email is attempted, so a mail failure cannot lose the lead.
-- New consultation requests appear in Cody's trainer dashboard and can also send a Resend email notification.
+> This is a real client project built and deployed for production use.
 
-## Local setup
+---
+
+## Overview
+
+Sharp Fitness combines a public-facing business website with a secure trainer/client platform.
+
+Clients can create accounts, purchase coaching services, manage recurring billing, and access personalized training content from their dashboard.
+
+The trainer can manage clients, review consultation requests, and securely deliver program-specific videos, documents, spreadsheets, images, and other resources.
+
+The application also synchronizes subscription state with Stripe so access to ongoing coaching services reflects the customer's current billing status.
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- Redux
+- React Router
+- HTML
+- CSS
+
+### Backend
+
+- Node.js
+- Express
+- Sequelize
+- PostgreSQL
+
+### Services / Infrastructure
+
+- Stripe
+- AWS S3
+- Resend
+- Render
+- Docker
+
+---
+
+## Key Features
+
+### Client Accounts
+
+- Secure account registration and authentication
+- Personalized client dashboard
+- Purchase and coaching history
+- Access to trainer-assigned files and program materials
+- Previously delivered content remains available after coaching ends
+
+### Trainer Dashboard
+
+- Dedicated trainer/admin account
+- View registered clients
+- Review active and canceled coaching programs
+- View consultation requests
+- Upload personalized files to eligible clients
+- Select which active program an upload belongs to
+- Prevent new uploads to canceled or expired subscriptions
+
+### Stripe Billing
+
+- Stripe Checkout integration
+- One-time purchases
+- Recurring monthly subscriptions
+- Stripe Customer Portal
+- Payment method management
+- Invoice history
+- Subscription cancellation
+- Cancellation-at-period-end support
+- Billing-period and access-end dates displayed in the client dashboard
+- Stripe webhook synchronization
+- Support for subscriptions created directly inside Stripe
+- Automatic matching of Stripe customers to website accounts
+
+### Subscription Synchronization
+
+The application does not rely exclusively on checkout events.
+
+Stripe subscriptions are also reconciled against local application data so subscriptions created or modified directly through Stripe can still appear correctly inside the client's account.
+
+Webhook events and account reconciliation keep local purchase records synchronized with Stripe subscription state.
+
+---
+
+## Content Access Model
+
+Sharp Fitness separates **ongoing service eligibility** from **ownership of previously delivered content**.
+
+For recurring coaching subscriptions:
+
+- Active subscriptions allow the trainer to deliver new personalized content.
+- A subscription scheduled for cancellation remains active until the paid billing period ends.
+- Once the subscription ends, the trainer can no longer upload new content under that program.
+- Files delivered before cancellation remain available to the client.
+
+For the one-time personalized program:
+
+- The trainer can deliver new program material during the configured delivery period.
+- Previously delivered files remain available permanently.
+
+A `ClientFile` therefore represents content already delivered to a specific client rather than access that disappears when billing ends.
+
+---
+
+## Private File Delivery
+
+Personalized client files are stored in a private S3 bucket.
+
+Uploads are sent directly from the trainer's browser to S3 using short-lived signed PUT URLs. Large files therefore do not need to pass through the application server.
+
+Clients receive short-lived signed GET URLs when accessing files from their account.
+
+The S3 bucket remains private.
+
+Typical supported content includes:
+
+- Videos
+- PDFs
+- Word documents
+- Spreadsheets
+- Images
+- Other program resources
+
+---
+
+## Consultation Requests
+
+Visitors can submit consultation requests through the public website.
+
+Requests are stored in PostgreSQL before the application attempts to send a notification email.
+
+This ensures a temporary email-provider failure does not cause a lead to be lost.
+
+Consultation requests remain visible inside the trainer dashboard even when email delivery fails.
+
+Email notifications are handled through Resend.
+
+---
+
+## Security
+
+Production credentials are provided through environment variables and are not stored in the repository.
+
+Sensitive configuration includes:
+
+- Stripe secret keys
+- Stripe webhook secrets
+- Database credentials
+- AWS credentials
+- S3 configuration
+- Resend API credentials
+- Trainer account password
+- JWT signing secret
+
+The repository ignores local environment files and development databases.
+
+```gitignore
+.env
+backend/.env
+*.sqlite
+*.sqlite3
+```
+
+Never commit production credentials.
+
+---
+
+## Local Development
+
+### Requirements
+
+- Node.js
+- npm
+
+Clone the repository and install dependencies:
 
 ```bash
 npm install
+```
+
+Create the backend environment file:
+
+```bash
 cp backend/.env.example backend/.env
+```
+
+Run database migrations:
+
+```bash
 npm run db:migrate
+```
+
+Seed the available programs:
+
+```bash
+npm --prefix backend run seed:products
+```
+
+Create or update the trainer account:
+
+```bash
 npm run ensure:trainer
 ```
 
-Run in two terminals:
+Start the backend:
 
 ```bash
 npm run dev:backend
+```
+
+Start the frontend in a second terminal:
+
+```bash
 npm run dev:frontend
 ```
 
-Frontend: `http://localhost:3000`  
-Backend: `http://localhost:8000`
+Frontend:
 
-## Trainer account
+```text
+http://localhost:3000
+```
 
-Set `TRAINER_PASSWORD` in `backend/.env` locally and in Render for production. The production startup script runs `ensure:trainer`, which creates or upgrades `TRAINER_EMAIL` as the trainer account.
+Backend:
 
-Never commit the real trainer password.
+```text
+http://localhost:8000
+```
 
-## Private uploads (S3)
+---
 
-Set:
+## Environment Configuration
 
-- `S3_BUCKET`
-- `S3_REGION`
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
+Example configuration is available in:
 
-The bucket should remain private. The application uses signed PUT URLs for uploads and signed GET URLs for client access.
+```text
+backend/.env.example
+```
 
-Because browser uploads go directly to S3, the S3 bucket needs CORS allowing your local/production site origins for `PUT` and the `Content-Type` header. A minimal AWS S3 CORS example is:
+### Application
+
+```env
+NODE_ENV=development
+PORT=8000
+JWT_SECRET=
+DATABASE_URL=
+```
+
+### Trainer Account
+
+```env
+TRAINER_EMAIL=trainer@example.com
+TRAINER_PASSWORD=
+TRAINER_FIRST_NAME=
+TRAINER_LAST_NAME=
+```
+
+### Stripe
+
+```env
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+```
+
+### S3
+
+```env
+S3_BUCKET=
+S3_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+```
+
+Optional S3-compatible storage settings:
+
+```env
+S3_ENDPOINT=
+S3_FORCE_PATH_STYLE=false
+```
+
+### Email Notifications
+
+```env
+RESEND_API_KEY=
+RESEND_FROM=
+CONTACT_NOTIFICATION_TO=
+```
+
+---
+
+## Stripe Webhooks
+
+Stripe webhooks are used to synchronize checkout and subscription events with application access.
+
+Handled subscription workflows include:
+
+- Checkout completion
+- Subscription creation
+- Subscription updates
+- Subscription cancellation
+- Billing-state changes
+
+During local development, Stripe CLI can forward webhook events to:
+
+```text
+http://localhost:8000/api/stripe/webhook
+```
+
+---
+
+## S3 CORS
+
+Because uploads are sent directly from the browser to S3, the bucket must allow the frontend origin to perform `PUT` requests.
+
+Example:
 
 ```json
 [
   {
     "AllowedHeaders": ["Content-Type"],
     "AllowedMethods": ["PUT"],
-    "AllowedOrigins": ["http://localhost:3000", "https://YOUR-RENDER-DOMAIN.onrender.com"],
+    "AllowedOrigins": [
+      "http://localhost:3000",
+      "https://sharpfitness.live"
+    ],
     "ExposeHeaders": ["ETag"]
   }
 ]
 ```
 
-Do not make the bucket public.
+The bucket itself should remain private.
 
-## Consultation emails
+---
 
-The consultation form POSTs to `/api/contact`. Every request is stored in `ContactRequests` first. Then the backend attempts a notification through Resend.
+## Deployment
 
-Configure:
+The application is deployed using Render.
 
-- `RESEND_API_KEY` — API key created in Resend
-- `RESEND_FROM` — sender address, for example `Sharp Fitness <notifications@yourdomain.com>`
-- `CONTACT_NOTIFICATION_TO` — Cody's notification address (defaults to `codysharp011@outlook.com`)
+`render.yaml` defines the production web service and PostgreSQL database while sensitive values are configured separately as environment variables.
 
-No Outlook password is required. If Resend is not configured or sending fails, the lead still remains visible in `/trainer` and the dashboard shows that email delivery did not occur. For production, verify a domain in Resend and use an address on that domain for `RESEND_FROM`.
+Production deployment includes:
 
-## Stripe
+- Docker-based application build
+- PostgreSQL database
+- Automatic deployment from GitHub
+- Stripe webhook integration
+- Private S3 file storage
+- Resend email notifications
 
-Set:
+---
 
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
+## Production Testing
 
-Stripe webhooks activate purchases/subscriptions and therefore client access.
+The application has been tested across the complete subscription and content-delivery lifecycle, including:
 
-## Render
+- Website account creation
+- One-time purchases
+- Monthly subscriptions
+- Stripe Checkout
+- Stripe Customer Portal access
+- Payment method management
+- Subscription cancellation
+- Cancellation at the end of a billing period
+- Billing and access-end dates
+- Subscription renewal/re-purchase
+- Multiple programs on a single account
+- Subscriptions created directly in Stripe
+- Stripe-to-website subscription synchronization
+- Trainer upload eligibility
+- Blocking uploads to canceled subscriptions
+- Permanent access to previously delivered materials
+- Production deployment
 
-`render.yaml` provisions the web service and PostgreSQL database and prompts for secrets. It also requires storage/Resend settings before private file uploads and email notifications work.
+---
 
+## Portfolio / Client Project
 
-## Access / entitlement rules
+Sharp Fitness is a production client project developed for Sharp Fitness.
 
-Sharp Fitness uses **delivery entitlement** rather than deleting access when someone stops paying:
+This repository is publicly available for portfolio and professional review purposes.
 
-- **$20 one-time program:** personalized 16-week program. Cody can add new private material for 112 days after the completed purchase. Every video/document delivered during that period remains in the client's account permanently.
-- **$100/month online coaching:** Cody can add new private material while the Stripe subscription is active. When the subscription ends, no new coaching material can be added under that subscription, but everything already delivered remains available permanently.
-- **$200/month 1-on-1 coaching:** same retention rule as online coaching: monthly billing controls ongoing service/new material, not access to prior material.
-- A `ClientFile` is therefore a permanent client entitlement once assigned. File access checks ownership, not current subscription status.
+Sharp Fitness branding, photography, logos, and other business assets remain the property of their respective owner.
 
-This distinction is important: **stopping payment ends future service, not the client's historical library.**
+No license is granted for reuse of those assets.
+
+---
+
+## Author
+
+**Brendan Fosse**
+
+Full-Stack Web Developer
+
+- GitHub: https://github.com/goonkiloz
+- LinkedIn: https://www.linkedin.com/in/brendan-fosse-b502b121a/
+- Portfolio: https://goonkiloz.github.io/
