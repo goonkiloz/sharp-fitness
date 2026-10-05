@@ -56,6 +56,7 @@ async function resolveLocalProduct(stripe, item, subscription) {
 
   const metadata = {
     ...(stripeProduct?.metadata || {}),
+    ...(item.price?.metadata || {}),
     ...(subscription?.metadata || {})
   };
 
@@ -155,29 +156,97 @@ async function syncStripeSubscription(subscription, stripeInstance = null) {
 
 async function syncStripeCustomerSubscriptions(user, stripeInstance = null) {
   const stripe = stripeInstance || getStripe();
-  if (!stripe || !user?.stripeCustomerId) return [];
+
+  if (!stripe || !user) return [];
+
+  const customerIds = new Set();
+
+  // Website already knows this Stripe customer.
+  if (user.stripeCustomerId) {
+    customerIds.add(user.stripeCustomerId);
+  }
+
+  // Also search Stripe by the website account's email.
+  // This lets Cody create the customer/subscription directly in Stripe.
+  if (user.email) {
+    try {
+      const customers = await stripe.customers.list({
+        email: String(user.email).trim().toLowerCase(),
+        limit: 100
+      });
+
+      for (const customer of customers.data) {
+        if (!customer.deleted) {
+          customerIds.add(customer.id);
+        }
+      }
+    } catch (err) {
+      console.error(
+        `Could not search Stripe customers for ${user.email}:`,
+        err
+      );
+    }
+  }
+
+  if (!customerIds.size) {
+    return [];
+  }
 
   const synced = [];
-  let startingAfter;
+  let customerToLink = user.stripeCustomerId || null;
 
-  do {
-    const page = await stripe.subscriptions.list({
-      customer: user.stripeCustomerId,
-      status: 'all',
-      limit: 100,
-      ...(startingAfter ? { starting_after: startingAfter } : {}),
-      expand: ['data.items.data.price.product']
-    });
+  for (const customerId of customerIds) {
+    let startingAfter;
+    let foundSubscription = false;
 
-    for (const subscription of page.data) {
-      const purchase = await syncStripeSubscription(subscription, stripe);
-      if (purchase) synced.push(purchase);
+    do {
+      const page = await stripe.subscriptions.list({
+        customer: customerId,
+        status: 'all',
+        limit: 100,
+        ...(startingAfter
+          ? { starting_after: startingAfter }
+          : {}),
+        expand: ['data.items.data.price.product']
+      });
+
+      if (page.data.length) {
+        foundSubscription = true;
+      }
+
+      for (const subscription of page.data) {
+        const purchase = await syncStripeSubscription(
+          subscription,
+          stripe
+        );
+
+        if (purchase) {
+          synced.push(purchase);
+        }
+      }
+
+      startingAfter =
+        page.has_more && page.data.length
+          ? page.data[page.data.length - 1].id
+          : null;
+
+    } while (startingAfter);
+
+    // If Cody created the Stripe customer manually,
+    // permanently link it to this website account.
+    if (!customerToLink && foundSubscription) {
+      customerToLink = customerId;
     }
+  }
 
-    startingAfter = page.has_more && page.data.length
-      ? page.data[page.data.length - 1].id
-      : null;
-  } while (startingAfter);
+  if (
+    customerToLink &&
+    user.stripeCustomerId !== customerToLink
+  ) {
+    await user.update({
+      stripeCustomerId: customerToLink
+    });
+  }
 
   return synced;
 }

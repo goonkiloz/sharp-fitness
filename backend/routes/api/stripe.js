@@ -66,9 +66,23 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
     if (
       event.type === 'customer.subscription.created' ||
-      event.type === 'customer.subscription.updated' ||
-      event.type === 'customer.subscription.deleted'
+      event.type === 'customer.subscription.updated'
     ) {
+      const eventSubscription = event.data.object;
+
+      // Always fetch Stripe's CURRENT subscription state instead of trusting
+      // potentially out-of-order webhook payloads.
+      const currentSubscription = await stripe.subscriptions.retrieve(
+        eventSubscription.id,
+        {
+          expand: ['items.data.price.product']
+        }
+      );
+
+      await syncStripeSubscription(currentSubscription, stripe);
+    }
+
+    if (event.type === 'customer.subscription.deleted') {
       await syncStripeSubscription(event.data.object, stripe);
     }
 
