@@ -1,4 +1,3 @@
-const { Op } = require('sequelize');
 const { Purchase, Product } = require('../db/models');
 
 function calculatedServiceEnd(purchase) {
@@ -8,27 +7,58 @@ function calculatedServiceEnd(purchase) {
   return new Date(new Date(purchase.purchasedAt).getTime() + Number(days) * 24 * 60 * 60 * 1000);
 }
 
-async function getContentDeliveryEntitlement(userId) {
+async function getContentDeliveryOptions(userId) {
   const purchases = await Purchase.findAll({
     where: { userId, status: 'active' },
     include: [{ model: Product }],
-    order: [['purchasedAt', 'DESC']]
+    order: [['purchasedAt', 'DESC'], ['createdAt', 'DESC']]
   });
 
   const now = new Date();
+  const seen = new Set();
+  const options = [];
+
   for (const purchase of purchases) {
-    if (!purchase.Product) continue;
-    if (purchase.Product.billingType === 'monthly') {
-      return { allowed: true, purchase, reason: 'active_monthly' };
+    const product = purchase.Product;
+    if (!product || seen.has(product.id)) continue;
+
+    if (product.billingType === 'monthly') {
+      seen.add(product.id);
+      options.push({
+        allowed: true,
+        purchase,
+        product,
+        reason: 'active_monthly',
+        serviceEndsAt: null
+      });
+      continue;
     }
-    if (purchase.Product.billingType === 'one_time') {
+
+    if (product.billingType === 'one_time') {
       const end = calculatedServiceEnd(purchase);
       if (!end || end >= now) {
-        return { allowed: true, purchase, reason: 'one_time_delivery_window', serviceEndsAt: end };
+        seen.add(product.id);
+        options.push({
+          allowed: true,
+          purchase,
+          product,
+          reason: 'one_time_delivery_window',
+          serviceEndsAt: end
+        });
       }
     }
   }
-  return { allowed: false, purchase: null, reason: 'no_current_delivery_entitlement' };
+
+  return options;
 }
 
-module.exports = { getContentDeliveryEntitlement, calculatedServiceEnd };
+async function getContentDeliveryEntitlement(userId, productId = null) {
+  const options = await getContentDeliveryOptions(userId);
+  if (productId != null) {
+    const match = options.find(option => Number(option.product.id) === Number(productId));
+    return match || { allowed: false, purchase: null, product: null, reason: 'no_current_delivery_entitlement', serviceEndsAt: null };
+  }
+  return options[0] || { allowed: false, purchase: null, product: null, reason: 'no_current_delivery_entitlement', serviceEndsAt: null };
+}
+
+module.exports = { getContentDeliveryEntitlement, getContentDeliveryOptions, calculatedServiceEnd };
