@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     accessLabel: { type: DataTypes.STRING, allowNull: true },
     deliveryDurationDays: { type: DataTypes.INTEGER, allowNull: true }
   });
-  Product.associate = models => Product.hasMany(models.Purchase, { foreignKey: 'productId', onDelete: 'CASCADE' });
+  Product.associate = models => {
+    Product.hasMany(models.Purchase, { foreignKey: 'productId', onDelete: 'CASCADE' });
+    Product.hasMany(models.ClientFile, { foreignKey: 'productId', onDelete: 'SET NULL' });
+  };
   return Product;
 };
