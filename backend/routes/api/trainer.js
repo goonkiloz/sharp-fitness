@@ -38,11 +38,10 @@ function collapsePurchases(purchases = []) {
 router.get('/dashboard', async (_req, res) => {
   const syncCandidates = await User.findAll({
     where: { isTrainer: false },
-    attributes: ['id', 'stripeCustomerId']
+    attributes: ['id', 'email', 'stripeCustomerId']
   });
 
   await Promise.all(syncCandidates.map(async client => {
-    if (!client.stripeCustomerId) return;
     try {
       await syncStripeCustomerSubscriptions(client);
     } catch (err) {
