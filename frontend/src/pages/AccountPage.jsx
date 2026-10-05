@@ -323,16 +323,27 @@ return (
               </p>
 
               <p className="muted">
-                Status: {p.status}
-
-                {p.Product?.billingType === 'one_time'
-                  ? ' · 16-week personalized program with lifetime access to delivered materials'
-                  : p.status === 'canceled'
-                    ? ' · coaching ended; your delivered materials remain available'
-                    : p.cancelAtPeriodEnd || p.cancelAt
-                      ? ' · cancellation scheduled'
-                      : ' · new materials are added while coaching remains active'
-                }
+                {p.Product?.billingType === 'one_time' ? (
+                  <>
+                    Status: Purchased
+                    {' · 16-week personalized program with lifetime access to delivered materials'}
+                  </>
+                ) : p.status === 'canceled' ? (
+                  <>
+                    Status: Canceled
+                    {' · coaching ended; your delivered materials remain available'}
+                  </>
+                ) : p.cancelAtPeriodEnd || p.cancelAt ? (
+                  <>
+                    Status: Active
+                    {' · Cancellation scheduled'}
+                  </>
+                ) : (
+                  <>
+                    Status: Active
+                    {' · new materials are added while coaching remains active'}
+                  </>
+                )}
               </p>
 
               {p.Product?.billingType === 'monthly' &&
