@@ -20,8 +20,9 @@ function safeExtension(filename) {
   return path.extname(filename || '').replace(/[^a-zA-Z0-9.]/g, '').slice(0, 12);
 }
 
-async function createUploadUrl({ userId, filename, mimeType }) {
-  const key = `clients/${userId}/${Date.now()}-${crypto.randomUUID()}${safeExtension(filename)}`;
+async function createUploadUrl({ userId, productId, filename, mimeType }) {
+  const programPath = productId ? `/program-${productId}` : '';
+  const key = `clients/${userId}${programPath}/${Date.now()}-${crypto.randomUUID()}${safeExtension(filename)}`;
   const command = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET,
     Key: key,

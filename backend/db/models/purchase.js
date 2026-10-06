@@ -9,7 +9,10 @@ module.exports = (sequelize, DataTypes) => {
     amountCents: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.ENUM('pending', 'active', 'canceled', 'refunded'), allowNull: false, defaultValue: 'pending' },
     purchasedAt: { type: DataTypes.DATE, allowNull: true },
-    serviceEndsAt: { type: DataTypes.DATE, allowNull: true }
+    serviceEndsAt: { type: DataTypes.DATE, allowNull: true },
+    currentPeriodEnd: {type: DataTypes.DATE, allowNull: true},
+    cancelAtPeriodEnd: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
+    cancelAt: {type: DataTypes.DATE, allowNull: true}
   });
   Purchase.associate = models => {
     Purchase.belongsTo(models.User, { foreignKey: 'userId' });
