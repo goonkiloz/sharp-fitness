@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useSite } from './SiteProvider';
-import { photoDefaults, siteDefaults } from './defaults';
+import { photoDefaults } from './defaults';
+import { maxTextLengths } from './limits';
 
 export function Copy({ field, as: Tag = 'p', className = '' }) {
   const { get, editing, trainer, setText } = useSite();
@@ -11,7 +12,7 @@ export function Copy({ field, as: Tag = 'p', className = '' }) {
     {editable && <label className="site-editor-label">
       Edit {field.split('.').slice(1).join(' ')}
       <textarea rows={Math.min(5, Math.max(2, Math.ceil(value.length / 65)))}
-        maxLength={field.toLowerCase().includes('description') || field.includes('story') ? 1300 : 700}
+        maxLength={maxTextLengths[field] || 500}
         value={value} onChange={e => setText(field, e.target.value)}
         aria-label={'Edit ' + field} />
       <small>{value.length} characters</small>
