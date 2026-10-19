@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/session';
 const markup = `
 <div class="bar">Now accepting new clients in San Diego and online. <a href="#contact">Book a free consult</a></div>
 <header><div class="w">
 <a class="brand" href="#top"><img alt="Sharp Fitness logo" src="/images/sharp-fitness-logo-a24843b318e0.png"/>Sharp Fitness</a>
 <nav><a href="#about">About</a><a href="#training">Training</a><a href="#pricing">Pricing</a><a href="#credentials">Credentials</a><a href="#contact">Contact</a></nav>
-<a class="account-link" href="/login">Client login</a><a class="btn" href="#contact">Book now</a>
+<a class="account-link" id="marketing-account-link" href="/login">Client login</a><a class="btn" id="marketing-main-action" href="#contact">Book now</a>
 </div></header>
 <main id="top">
 <div class="hero"><div class="w">
@@ -117,10 +119,58 @@ const markup = `
 <span style="display:flex;align-items:center;gap:10px"><img alt="" src="/images/sharp-fitness-logo-a24843b318e0.png"/>Sharp Fitness</span>
 <span>Cody Sharp · Master Coach, NASM and ISSA · San Diego, CA</span>
 </div></footer>
-<nav aria-label="Quick contact" class="dock"><a href="tel:+16196421150">Call</a><a href="sms:+16196421150">Text</a><a href="#contact">Book</a></nav>
+<nav aria-label="Quick contact" class="dock"><a href="tel:+16196421150">Call</a><a href="sms:+16196421150">Text</a><a id="marketing-mobile-action" href="#contact">Book</a></nav>
 
 `;
 export default function HomePage() {
+  const dispatch = useDispatch();
+  const { user, loading } = useSelector(state => state.session);
+
+  useEffect(() => {
+    const account = document.getElementById('marketing-account-link');
+    const action = document.getElementById('marketing-main-action');
+    const mobileAction = document.getElementById('marketing-mobile-action');
+    if (!account || !action) return;
+
+    if (loading) {
+      account.textContent = 'Account';
+      account.removeAttribute('href');
+      action.style.visibility = 'hidden';
+      return;
+    }
+
+    action.style.visibility = '';
+    if (user) {
+      account.textContent = 'Log out';
+      account.href = '/';
+      action.textContent = user.isTrainer ? 'Trainer dashboard' : 'My account';
+      action.href = user.isTrainer ? '/trainer' : '/account';
+      if (mobileAction) {
+        mobileAction.textContent = 'Dashboard';
+        mobileAction.href = user.isTrainer ? '/trainer' : '/account';
+      }
+      const onLogout = async event => {
+        event.preventDefault();
+        try {
+          await dispatch(logout()).unwrap();
+        } catch (err) {
+          console.error('Could not log out:', err);
+        }
+      };
+      account.addEventListener('click', onLogout);
+      return () => account.removeEventListener('click', onLogout);
+    }
+
+    account.textContent = 'Client login';
+    account.href = '/login';
+    action.textContent = 'Book now';
+    action.href = '#contact';
+    if (mobileAction) {
+      mobileAction.textContent = 'Book';
+      mobileAction.href = '#contact';
+    }
+  }, [user, loading, dispatch]);
+
   useEffect(() => {
     const form=document.getElementById('f');
     const share=document.getElementById('sh');
