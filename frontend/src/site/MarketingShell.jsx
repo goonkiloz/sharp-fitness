@@ -1,4 +1,5 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/session';
 import { EditorBar } from './Editable';
@@ -13,7 +14,19 @@ export default function MarketingShell({ children }) {
   const { user } = useSelector(s => s.session);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const isTrainer = Boolean(user?.isTrainer);
+  useEffect(() => {
+    const titles = {
+      '/': 'Personal Training in San Diego',
+      '/about': 'Meet Cody Sharp',
+      '/training': 'Personal Training and Online Coaching',
+      '/pricing': 'Programs and Pricing',
+      '/contact': 'Book a Free Consultation'
+    };
+    document.title = (titles[pathname] || 'Sharp Fitness') + ' | Sharp Fitness';
+    window.scrollTo(0, 0);
+  }, [pathname]);
   const signOut = async () => {
     try { await dispatch(logout()).unwrap(); navigate('/'); }
     catch (err) { console.error('Sign-out failed:', err); }
