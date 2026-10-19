@@ -1,0 +1,197 @@
+/* Public Sharp Fitness pages — V2. Entire design scoped away from account pages. */
+.site-marketing {
+  --s-bg:#0c0c10; --s-panel:#17171c; --s-panel2:#1d1c23; --s-line:#35323c;
+  --s-fg:#f6f3f2; --s-muted:#b8b0b7; --s-accent:#e34e68;
+  min-height:100vh; background:var(--s-bg); color:var(--s-fg);
+  font-family:"Hanken Grotesk",system-ui,sans-serif;
+}
+.site-marketing *, .site-marketing *::before, .site-marketing *::after { box-sizing:border-box; }
+.site-marketing .site-container { width:min(1440px, calc(100% - 96px)); margin-inline:auto; }
+.site-marketing .site-announcement {
+  min-height:29px; background:#94132a; font-size:.76rem; text-align:center;
+  display:flex; align-items:center; justify-content:center; gap:6px; padding:5px 15px;
+}
+.site-marketing .site-announcement a { color:white; font-weight:800; text-decoration:underline; }
+.site-marketing .site-header { background:#100e12; border-bottom:1px solid #30252d; position:sticky; top:0; z-index:30; }
+.site-marketing .site-header-inner { min-height:82px; display:flex; align-items:center; gap:32px; }
+.site-marketing .site-logo { text-decoration:none; display:inline-flex; gap:11px; align-items:center; flex-shrink:0; color:#fff; font:900 1.45rem "Big Shoulders Display",Impact,sans-serif; white-space:nowrap; letter-spacing:.04em; }
+.site-marketing .site-logo img { height:42px; width:42px; border-radius:50%; }
+.site-marketing .site-nav { display:flex; align-items:center; justify-content:center; gap:27px; flex:1; }
+.site-marketing .site-nav a { font-size:.83rem; color:#c0b7be; text-decoration:none; font-weight:700; padding:8px 0; border-bottom:2px solid transparent; transition:color .2s; }
+.site-marketing .site-nav a:hover, .site-marketing .site-nav a.site-nav-active { color:#fff; border-bottom-color:var(--s-accent); }
+.site-marketing .site-account-actions { display:flex; gap:18px; align-items:center; white-space:nowrap; }
+.site-marketing .site-account-link, .site-marketing .site-sign-out { color:#e9e2e4; font-size:.82rem; text-decoration:none; font-weight:700; background:none; border:0; padding:8px 0; cursor:pointer; }
+.site-marketing .site-header-cta { padding:11px 16px; font-size:.82rem; font-weight:800; color:white; text-decoration:none; background:#a51c38; border-radius:2px; }
+.site-marketing .site-sign-out:hover, .site-marketing .site-account-link:hover { color:#ff8499; }
+.site-marketing .site-eyebrow { display:block; color:#f58197; font-size:.71rem; letter-spacing:.2em; font-weight:800; margin-bottom:20px; }
+.site-marketing h1 { font:900 clamp(3.2rem,7vw,6.7rem)/.94 "Big Shoulders Display",Impact,sans-serif; letter-spacing:.001em; margin:0 0 25px; }
+.site-marketing h2 { font:900 clamp(2.6rem,4vw,4.5rem)/.98 "Big Shoulders Display",Impact,sans-serif; margin:0 0 22px; }
+.site-marketing h3 { font:800 clamp(1.7rem,2.5vw,2.3rem)/1.06 "Big Shoulders Display",Impact,sans-serif; margin:0 0 12px; }
+.site-marketing p { font-size:1rem; color:var(--s-muted); line-height:1.75; max-width:66ch; margin:0 0 24px; }
+.site-marketing .site-button {
+  background:#b72645; border:1px solid #b72645; color:#fff; text-decoration:none;
+  font:800 .87rem "Hanken Grotesk",system-ui,sans-serif;
+  min-height:47px; display:inline-flex; align-items:center; justify-content:center;
+  gap:16px; padding:13px 22px; border-radius:3px; cursor:pointer; transition:background .2s,transform .2s;
+}
+.site-marketing .site-button:hover { background:#d03859; transform:translateY(-1px); }
+.site-marketing .site-button:disabled { opacity:.55; cursor:wait; }
+.site-marketing .site-button-outline { background:transparent; border-color:#62555b; }
+.site-marketing .site-button-outline:hover { background:#312630; }
+.site-marketing .site-text-link { color:#ffc0cc; text-decoration:none; font-weight:800; font-size:.85rem; }
+.site-marketing .site-text-link:hover { text-decoration:underline; }
+.site-marketing .site-section { padding:90px 0; }
+.site-marketing .site-home-hero, .site-marketing .site-inner-hero {
+  position:relative; overflow:hidden; isolation:isolate;
+  background:radial-gradient(ellipse 60% 75% at 85% 35%,rgba(141,31,52,.13),transparent 75%),#100d11;
+}
+.site-marketing .site-home-hero::before, .site-marketing .site-inner-hero::before, .site-marketing .site-dark-panel::before {
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:-1;
+  background:radial-gradient(circle at 1px 1px,rgba(235,210,223,.36) 0 .8px,transparent 1.8px);
+  background-size:23px 23px;
+  -webkit-mask-image:linear-gradient(100deg,transparent 8%,rgba(0,0,0,.5) 55%,transparent 100%);
+  mask-image:linear-gradient(100deg,transparent 8%,rgba(0,0,0,.5) 55%,transparent 100%);
+  opacity:.25;
+}
+.site-marketing .site-hero-grid { min-height:min(730px,calc(100svh - 111px)); display:grid; grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr); align-items:center; gap:clamp(24px,5vw,100px); }
+.site-marketing .site-hero-content { padding:65px 0; }
+.site-marketing .site-hero-content h1 { max-width:780px; font-size:clamp(4rem,7.5vw,8.3rem); }
+.site-marketing .site-hero-content p { max-width:560px; font-size:1.12rem; }
+.site-marketing .site-hero-buttons { display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; }
+.site-marketing .site-hero-caption { display:flex; align-items:center; gap:10px; margin-top:68px; letter-spacing:.17em; font-size:.64rem; font-weight:800; color:#a79da4; }
+.site-marketing .site-hero-caption span { width:28px; height:1px; background:#b83450; }
+.site-marketing .site-hero-art { align-self:stretch; position:relative; min-height:520px; display:flex; flex-direction:column; justify-content:center; }
+.site-marketing .site-hero-art .site-photo-wrap { max-height:650px; aspect-ratio: .92; width:100%; border-left:4px solid #b52442; overflow:hidden; background:#1f1b1d; }
+.site-marketing .site-hero-art .site-photo-wrap img { object-position:center 20%; }
+.site-marketing .site-image-caption { position:absolute; right:18px; bottom:25px; background:rgba(15,12,16,.84); border:1px solid #4a303a; padding:9px 12px; font-size:.67rem; font-weight:800; letter-spacing:.14em; }
+.site-marketing .site-photo-wrap { position:relative; width:100%; background:#24212a; }
+.site-marketing .site-photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.site-marketing .site-photo-edit { position:absolute; bottom:16px; left:16px; right:16px; background:rgba(10,10,14,.9); padding:10px; border:1px solid #7b4854; }
+.site-marketing .site-photo-edit button { background:#b72645; color:white; border:0; padding:11px 16px; border-radius:3px; cursor:pointer; font-weight:800; }
+.site-marketing .site-intro-section { background:#17151a; }
+.site-marketing .site-intro-grid, .site-marketing .site-story-grid { display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,7vw,125px); align-items:start; }
+.site-marketing .site-intro-grid p, .site-marketing .site-story-grid p { font-size:1.11rem; }
+.site-marketing .site-dark-panel { position:relative; isolation:isolate; background:#15141a; }
+.site-marketing .site-section-heading { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:33px; }
+.site-marketing .site-section-heading h2 { margin-bottom:0; }
+.site-marketing .site-service-grid, .site-marketing .site-training-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.site-marketing .site-service-card, .site-marketing .site-training-grid > div { min-height:320px; background:linear-gradient(145deg,#242027,#16151a); border:1px solid #3a333d; padding:32px 28px; text-decoration:none; transition:transform .15s,border-color .15s; }
+.site-marketing .site-service-card:hover { border-color:#a1465a; transform:translateY(-4px); }
+.site-marketing .site-service-card > span, .site-marketing .site-training-grid > div > span { display:block; margin-bottom:45px; font-weight:800; color:#f28499; letter-spacing:.16em; font-size:.76rem; }
+.site-marketing .site-service-card h3 { color:white; }
+.site-marketing .site-service-card p { font-size:.94rem; margin-bottom:20px; }
+.site-marketing .site-service-card strong { display:inline-block; margin-top:auto; color:#ffc1cc; font-size:.82rem; }
+.site-marketing .site-home-cta { background:radial-gradient(ellipse 80% 200% at 80% 70%,#3e1724,transparent 85%),#190e16; }
+.site-marketing .site-cta-content { display:flex; flex-direction:column; align-items:center; text-align:center; }
+.site-marketing .site-cta-content .site-button { margin-top:20px; }
+.site-marketing .site-inner-hero { padding-top:90px; padding-bottom:90px; }
+.site-marketing .site-two-column { display:grid; grid-template-columns:1fr .85fr; gap:clamp(35px,7vw,125px); align-items:center; }
+.site-marketing .site-two-column p { font-size:1.1rem; max-width:590px; }
+.site-marketing .site-two-column .site-button { margin-top:12px; }
+.site-marketing .site-page-image { width:100%; height:580px; border-left:4px solid #b52442; overflow:hidden; }
+.site-marketing .site-credential-list { border-top:1px solid #4d454c; }
+.site-marketing .site-credential-list > div { padding:25px 0; display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid #35313a; }
+.site-marketing .site-credential-list strong { font-size:1.06rem; }
+.site-marketing .site-credential-list span { color:#b8b0b7; font-size:.94rem; text-align:right; }
+.site-marketing .site-training-grid > div { min-height:295px; }
+.site-marketing .site-training-grid > div > span { margin-bottom:50px; }
+.site-marketing .site-training-grid p { font-size:.92rem; }
+.site-marketing .site-bottom-cta { text-align:center; display:flex; flex-direction:column; align-items:center; }
+.site-marketing .site-bottom-cta p { max-width:520px; }
+.site-marketing .site-pricing-hero { padding-bottom:70px; }
+.site-marketing .site-pricing-hero p { max-width:600px; }
+.site-marketing .site-pricing-section { padding-top:36px; }
+.site-marketing .site-price-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.site-marketing .site-price-card { border:1px solid #3d3540; background:#1c1920; padding:36px 30px; min-height:430px; display:flex; flex-direction:column; align-items:start; }
+.site-marketing .site-price-card h2 { font-size:2.5rem; min-height:96px; }
+.site-marketing .site-price-card p { font-size:.94rem; }
+.site-marketing .site-price-card > strong { font:900 4rem/1 "Big Shoulders Display",Impact,sans-serif; color:#f07890; margin-top:auto; }
+.site-marketing .site-price-card > small { color:#b7a8af; margin:8px 0 26px; }
+.site-marketing .site-contact-intro { background:#150e14; }
+.site-marketing .site-contact-intro p { max-width:650px; }
+.site-marketing .site-contact-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:8vw; align-items:start; }
+.site-marketing .site-contact-form { max-width:none; display:grid; gap:18px; padding:33px; background:#19171e; border:1px solid #40343d; }
+.site-marketing .site-contact-form h2 { font-size:2.55rem; margin-bottom:10px; }
+.site-marketing .site-contact-form label { color:#f7eaf0; display:grid; gap:7px; font-size:.88rem; font-weight:700; }
+.site-marketing .site-contact-form input, .site-marketing .site-contact-form select, .site-marketing .site-contact-form textarea {
+  min-width:0; width:100%; padding:13px 14px; border:1px solid #53434f; background:#0d0e12; color:white; border-radius:3px;
+}
+.site-marketing .site-contact-form .site-button { justify-self:start; }
+.site-marketing .site-contact-aside { padding-top:24px; }
+.site-marketing .site-contact-aside h2 { max-width:500px; }
+.site-marketing .site-contact-aside > div { display:grid; gap:5px; border-top:1px solid #423b45; padding:20px 0; }
+.site-marketing .site-contact-aside > div span { font-size:.72rem; letter-spacing:.14em; font-weight:800; color:#bf94a1; }
+.site-marketing .site-contact-aside > div a { color:#fff; text-decoration:none; font-size:1.1rem; }
+.site-marketing .site-form-error { color:#ffadb9; }
+.site-marketing .site-form-success { color:#b5e4c5; }
+.site-marketing .site-footer { background:#0d0c10; border-top:1px solid #352d34; color:#c4b8c0; padding:35px 0; }
+.site-marketing .site-footer-inner { display:flex; align-items:center; justify-content:space-between; gap:25px; flex-wrap:wrap; }
+.site-marketing .site-footer-inner > div:first-child { display:grid; gap:4px; }
+.site-marketing .site-footer-inner strong { font:900 1.5rem "Big Shoulders Display",Impact,sans-serif; color:white; }
+.site-marketing .site-footer-inner small { font-size:.72rem; color:#aaa1a9; }
+.site-marketing .site-footer-inner > div:nth-child(2) { display:flex; flex-wrap:wrap; gap:18px; }
+.site-marketing .site-footer-inner a { color:#d7cbd0; font-size:.8rem; text-decoration:none; }
+/* Trainer-only authoring UI */
+.site-marketing .site-editor-bar { position:sticky; top:82px; z-index:24; background:#261b23; border-bottom:1px solid #a03b54; padding:11px max(24px,calc((100% - 1440px)/2)); display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.site-marketing .site-editor-bar > span { display:grid; gap:2px; }
+.site-marketing .site-editor-bar strong { font-size:.79rem; }
+.site-marketing .site-editor-bar small { font-size:.69rem; color:#ffbec9; }
+.site-marketing .site-editor-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.site-marketing .site-editor-bar button { background:#b72645; color:white; padding:9px 13px; border:1px solid #b72645; border-radius:3px; font-weight:800; font-size:.75rem; cursor:pointer; }
+.site-marketing .site-editor-bar button.site-editor-secondary { background:transparent; border-color:#7a5965; }
+.site-marketing .site-editor-bar button:disabled { opacity:.45; cursor:wait; }
+.site-marketing .site-editor-bar p { margin:0; font-size:.76rem; max-width:unset; }
+.site-marketing .site-editor-error { color:#ffb6c0; }
+.site-marketing .site-editor-note { color:#b6e2c9; }
+.site-marketing .site-edit-field { position:relative; outline:1px dashed rgba(238,105,130,.6); outline-offset:5px; margin-block:8px 18px; }
+.site-marketing .site-editor-label { display:block; text-transform:capitalize; color:#f5bac6; font-size:.72rem; font-weight:800; letter-spacing:.03em; margin-top:12px; }
+.site-marketing .site-editor-label textarea { display:block; width:100%; min-height:70px; max-width:100%; margin-top:7px; padding:11px; border:1px solid #a3586c; border-radius:4px; font-size:.89rem; background:#21171f; color:white; font-family:"Hanken Grotesk",sans-serif; line-height:1.5; }
+.site-marketing .site-editor-label small { display:block; font-size:.64rem; color:#aaa0aa; }
+.site-marketing :focus-visible { outline:2px solid #f88196; outline-offset:3px; }
+@media (max-width:1180px) {
+  .site-marketing .site-container { width:min(100% - 56px,1440px); }
+  .site-marketing .site-header-inner { gap:17px; }
+  .site-marketing .site-nav { gap:16px; }
+  .site-marketing .site-hero-grid { min-height:590px; }
+  .site-marketing .site-hero-content h1 { font-size:clamp(3.8rem,6vw,6rem); }
+}
+@media (max-width:900px) {
+  .site-marketing .site-container { width:min(100% - 40px,760px); }
+  .site-marketing .site-header-inner { flex-wrap:wrap; padding:12px 0; gap:12px; }
+  .site-marketing .site-nav { width:100%; justify-content:flex-start; order:3; overflow-x:auto; gap:20px; }
+  .site-marketing .site-account-actions { margin-left:auto; }
+  .site-marketing .site-hero-grid, .site-marketing .site-two-column, .site-marketing .site-intro-grid,
+  .site-marketing .site-story-grid, .site-marketing .site-contact-grid { grid-template-columns:1fr; }
+  .site-marketing .site-hero-content { padding:64px 0 12px; }
+  .site-marketing .site-hero-art { min-height:300px; padding-bottom:32px; }
+  .site-marketing .site-hero-art .site-photo-wrap { height:440px; aspect-ratio:auto; }
+  .site-marketing .site-hero-caption { margin-top:35px; }
+  .site-marketing .site-service-grid, .site-marketing .site-training-grid, .site-marketing .site-price-grid { grid-template-columns:1fr 1fr; }
+  .site-marketing .site-editor-bar { top:115px; }
+  .site-marketing .site-page-image { height:420px; }
+}
+@media (max-width:600px) {
+  .site-marketing .site-container { width:calc(100% - 32px); }
+  .site-marketing .site-section { padding:60px 0; }
+  .site-marketing .site-header-inner { min-height:67px; }
+  .site-marketing .site-header-cta { display:none; }
+  .site-marketing .site-logo { font-size:1.28rem; }
+  .site-marketing .site-logo img { height:35px; width:35px; }
+  .site-marketing .site-account-actions { gap:10px; }
+  .site-marketing .site-account-actions a, .site-marketing .site-account-actions button { font-size:.71rem; }
+  .site-marketing .site-hero-grid { gap:18px; }
+  .site-marketing .site-hero-content h1 { font-size:clamp(3.7rem,14vw,5.5rem); }
+  .site-marketing .site-hero-content p { font-size:1rem; }
+  .site-marketing .site-hero-buttons { align-items:stretch; flex-direction:column; }
+  .site-marketing .site-hero-art .site-photo-wrap { height:360px; }
+  .site-marketing .site-section-heading { display:block; }
+  .site-marketing .site-section-heading .site-text-link { display:block; margin-top:22px; }
+  .site-marketing .site-service-grid, .site-marketing .site-training-grid, .site-marketing .site-price-grid { grid-template-columns:1fr; }
+  .site-marketing .site-credential-list > div { flex-direction:column; align-items:start; gap:7px; }
+  .site-marketing .site-credential-list span { text-align:left; }
+  .site-marketing .site-price-card { min-height:330px; }
+  .site-marketing .site-contact-form { padding:18px; }
+  .site-marketing .site-footer-inner { align-items:start; }
+  .site-marketing .site-editor-bar { top:115px; padding:9px 16px; }
+}
+@media (prefers-reduced-motion:reduce) { .site-marketing * { transition:none!important; scroll-behavior:auto!important; } }
