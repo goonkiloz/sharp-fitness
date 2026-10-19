@@ -51,7 +51,7 @@ router.get('/dashboard', async (_req, res) => {
 
   const clients = await User.findAll({
     where: { isTrainer: false },
-    attributes: ['id','firstName','lastName','email','createdAt'],
+    attributes: ['id','firstName','lastName','email','phone','createdAt'],
     include: [
       { model: Purchase, include: [{ model: Product }], required: false },
       { model: ClientFile, as: 'ClientFiles', include: [{ model: Product }], required: false }
