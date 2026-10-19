@@ -234,3 +234,49 @@
 
 /* Generic marketing styles give sections large vertical padding; remove it in the workspace. */
 .trainer-page .td-directory, .trainer-page .td-lead-list { padding: 0; }
+
+/* V2 full-width trainer homepage: broad four-panel layout, not a narrow sidebar. */
+.trainer-page .trainer-main { width:min(1720px,calc(100% - 64px)); }
+.trainer-page .td-layout { display:block; }
+.trainer-page .td-nav-strip {
+  display:flex; justify-content:space-between; align-items:center; gap:24px;
+  border:1px solid #33313a; background:linear-gradient(120deg,rgba(27,26,34,.95),rgba(14,15,22,.95));
+  border-radius:12px; padding:9px 14px; margin-bottom:30px;
+}
+.trainer-page .td-nav-strip .td-tabs { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+.trainer-page .td-nav-strip .td-tab { width:auto; padding:12px 16px; white-space:nowrap; }
+.trainer-page .td-nav-privacy { font-size:.7rem; font-weight:800; letter-spacing:.11em; color:#bfb8bf; white-space:nowrap; }
+.trainer-page .td-nav-privacy .td-note-light { vertical-align:middle; margin-right:5px; }
+.trainer-page .td-dashboard-grid { display:grid; gap:18px; align-items:stretch; }
+.trainer-page .td-dashboard-top { grid-template-columns: minmax(0,1.32fr) minmax(0,.9fr); }
+.trainer-page .td-dashboard-bottom { grid-template-columns:minmax(0,.82fr) minmax(0,1.15fr); margin-top:18px; }
+.trainer-page .td-dashboard-panel { min-height:310px; padding:26px 28px; }
+.trainer-page .td-dashboard-panel .td-panel-heading { align-items:start; }
+.trainer-page .td-pulse-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.trainer-page .td-pulse-stats .td-stat { min-height:170px; }
+.trainer-page .td-dashboard-inbox .td-mini-lead,
+.trainer-page .td-dashboard-clients .td-mini-client { padding:12px 0; }
+.trainer-page .td-delivery-number { display:flex; align-items:baseline; gap:14px; border-bottom:1px solid #3e3540; padding:14px 0 23px; }
+.trainer-page .td-delivery-number strong { font:900 clamp(3.8rem,6vw,6rem)/1 "Big Shoulders Display",Impact,sans-serif; color:#f8f1f4; }
+.trainer-page .td-delivery-number span { font-size:.84rem; color:#b6abb6; }
+.trainer-page .td-operations-description { max-width:460px; color:#c3b9bf; font-size:.9rem; margin:20px 0; }
+.trainer-page .td-quick-actions { display:flex; flex-wrap:wrap; gap:10px; }
+@media (max-width:1380px) {
+  .trainer-page .td-pulse-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .trainer-page .td-pulse-stats .td-stat { min-height:138px; }
+}
+@media (max-width:920px) {
+  .trainer-page .trainer-main { width:calc(100% - 40px); }
+  .trainer-page .td-dashboard-top,
+  .trainer-page .td-dashboard-bottom { grid-template-columns:1fr; }
+  .trainer-page .td-nav-strip { align-items:start; }
+  .trainer-page .td-nav-privacy { display:none; }
+  .trainer-page .td-nav-strip .td-tabs { flex-wrap:nowrap; max-width:100%; overflow-x:auto; }
+}
+@media (max-width:580px) {
+  .trainer-page .trainer-main { width:calc(100% - 28px); }
+  .trainer-page .td-dashboard-panel { padding:19px 17px; min-height:unset; }
+  .trainer-page .td-nav-strip { padding:7px; }
+  .trainer-page .td-nav-strip .td-tab { padding:11px 10px; font-size:.77rem; }
+  .trainer-page .td-pulse-stats { gap:9px; }
+}
