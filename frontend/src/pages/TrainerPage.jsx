@@ -165,8 +165,7 @@ export default function TrainerPage() {
       {error && <div className="td-error" role="alert">{error}</div>}
 
       <div className="td-layout">
-        <aside className="td-sidebar">
-          <p className="td-side-label">WORKSPACE</p>
+        <div className="td-nav-strip">
           <nav className="td-tabs" aria-label="Dashboard sections">
             {tabs.map(item => <button
               key={item.id} type="button"
@@ -175,34 +174,55 @@ export default function TrainerPage() {
               onClick={() => changeTab(item.id)}>
               <span className="td-tab-number">{item.number}</span>
               <span>{item.label}</span>
-              {tab === item.id && <span className="td-tab-indicator" aria-hidden="true">•</span>}
             </button>)}
           </nav>
-          <div className="td-sidebar-note"><span className="td-note-light" />CLIENT DATA<br /><small>Visible only to trainer accounts</small></div>
-        </aside>
+          <span className="td-nav-privacy"><span className="td-note-light" />TRAINER ONLY</span>
+        </div>
 
         <div className="td-workspace">
           {tab === 'overview' && <>
-            <div className="td-section-title"><div><p className="td-kicker">AT A GLANCE</p><h2>Overview</h2></div><span className="td-subtext">Live account summary</span></div>
-            <div className="td-stats">
-              <button className="td-stat" type="button" onClick={() => changeTab('clients')}>
-                <span>Registered clients</span><strong>{clients.length}</strong><small>View client directory →</small>
-              </button>
-              <button className="td-stat" type="button" onClick={() => { setClientFilter('active'); changeTab('clients'); }}>
-                <span>Eligible for delivery</span><strong>{eligibleCount}</strong><small>Clients with active access →</small>
-              </button>
-              <button className="td-stat" type="button" onClick={() => { setClientFilter('unconverted'); changeTab('clients'); }}>
-                <span>Without a purchase</span><strong>{noPurchaseCount}</strong><small>Potential follow-ups →</small>
-              </button>
-              <button className="td-stat" type="button" onClick={() => changeTab('consultations')}>
-                <span>New consultations</span><strong>{newContacts.length}</strong><small>Review requests →</small>
-              </button>
+            <div className="td-section-title"><div><p className="td-kicker">BUSINESS AT A GLANCE</p><h2>Overview</h2></div><span className="td-subtext">Your operational snapshot</span></div>
+            <div className="td-dashboard-grid td-dashboard-top">
+              <section className="td-panel td-dashboard-panel td-dashboard-pulse">
+                <div className="td-panel-heading">
+                  <div><p className="td-kicker">01 / PERFORMANCE</p><h3>Business pulse</h3></div>
+                  <span className="td-subtext">Live account status</span>
+                </div>
+                <div className="td-pulse-stats">
+                  <button className="td-stat" type="button" onClick={() => { setClientFilter('all'); changeTab('clients'); }}>
+                    <span>Registered clients</span><strong>{clients.length}</strong><small>Open directory →</small>
+                  </button>
+                  <button className="td-stat" type="button" onClick={() => { setClientFilter('active'); changeTab('clients'); }}>
+                    <span>Eligible for uploads</span><strong>{eligibleCount}</strong><small>See active clients →</small>
+                  </button>
+                  <button className="td-stat" type="button" onClick={() => { setClientFilter('unconverted'); changeTab('clients'); }}>
+                    <span>Without a purchase</span><strong>{noPurchaseCount}</strong><small>View potential leads →</small>
+                  </button>
+                  <button className="td-stat" type="button" onClick={() => changeTab('consultations')}>
+                    <span>New consultations</span><strong>{newContacts.length}</strong><small>Review your inbox →</small>
+                  </button>
+                </div>
+              </section>
+              <section className="td-panel td-dashboard-panel td-dashboard-inbox">
+                <div className="td-panel-heading">
+                  <div><p className="td-kicker">02 / REQUESTS</p><h3>Consultation inbox</h3></div>
+                  <button type="button" onClick={() => changeTab('consultations')}>View all →</button>
+                </div>
+                {contacts.length ? contacts.slice(0, 5).map(c =>
+                  <div className="td-mini-lead" key={c.id}>
+                    <div><strong>{c.name}</strong><span>{c.interestedIn || c.goal || 'General consultation'}</span></div>
+                    <span className={'td-status' + (c.status === 'new' ? ' is-new' : '')}>{c.status}</span>
+                  </div>
+                ) : <p className="td-empty">No consultation requests yet.</p>}
+              </section>
             </div>
-
-            <div className="td-overview-grid">
-              <section className="td-panel td-overview-panel">
-                <div className="td-panel-heading"><div><p className="td-kicker">PEOPLE</p><h3>Recent accounts</h3></div><button type="button" onClick={() => changeTab('clients')}>View all →</button></div>
-                {clients.length ? clients.slice(0, 5).map(c =>
+            <div className="td-dashboard-grid td-dashboard-bottom">
+              <section className="td-panel td-dashboard-panel td-dashboard-clients">
+                <div className="td-panel-heading">
+                  <div><p className="td-kicker">03 / CLIENTS</p><h3>Recent accounts</h3></div>
+                  <button type="button" onClick={() => { setClientFilter('all'); changeTab('clients'); }}>View directory →</button>
+                </div>
+                {clients.length ? clients.slice(0, 6).map(c =>
                   <div className="td-mini-client" key={c.id}>
                     <div className="td-avatar" aria-hidden="true">{initials(c)}</div>
                     <div className="td-mini-client-name"><strong>{c.firstName} {c.lastName}</strong><span>{c.email}</span></div>
@@ -210,15 +230,16 @@ export default function TrainerPage() {
                   </div>
                 ) : <p className="td-empty">No client accounts yet.</p>}
               </section>
-              <section className="td-panel td-overview-panel">
-                <div className="td-panel-heading"><div><p className="td-kicker">INBOX</p><h3>Consultation queue</h3></div><button type="button" onClick={() => changeTab('consultations')}>Open inbox →</button></div>
-                {contacts.length ? contacts.slice(0, 4).map(c =>
-                  <div className="td-mini-lead" key={c.id}>
-                    <div><strong>{c.name}</strong><span>{c.interestedIn || c.goal || 'General consultation'}</span></div>
-                    <span className={'td-status' + (c.status === 'new' ? ' is-new' : '')}>{c.status}</span>
-                  </div>
-                ) : <p className="td-empty">No consultation requests yet.</p>}
-                <div className="td-panel-footnote">{deliveredCount} client file{deliveredCount === 1 ? '' : 's'} delivered so far</div>
+              <section className="td-panel td-dashboard-panel td-dashboard-operations">
+                <div className="td-panel-heading">
+                  <div><p className="td-kicker">04 / OPERATIONS</p><h3>Content delivery</h3></div>
+                </div>
+                <div className="td-delivery-number"><strong>{deliveredCount}</strong><span>Files delivered to clients</span></div>
+                <p className="td-operations-description">Keep client programs organized and deliver training material securely.</p>
+                <div className="td-quick-actions">
+                  <button type="button" className="td-outline-btn" onClick={() => changeTab('content')}>Upload client content →</button>
+                  <button type="button" className="td-outline-btn" onClick={() => changeTab('clients')}>Review client history →</button>
+                </div>
               </section>
             </div>
           </>}
