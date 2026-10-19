@@ -231,3 +231,6 @@
 @media (prefers-reduced-motion: reduce) {
   .trainer-page *, .trainer-page *::before, .trainer-page *::after { transition: none !important; }
 }
+
+/* Generic marketing styles give sections large vertical padding; remove it in the workspace. */
+.trainer-page .td-directory, .trainer-page .td-lead-list { padding: 0; }
