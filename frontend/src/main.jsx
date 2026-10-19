@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { store } from './redux/store';
 import router from './router';
 import AppBootstrap from './AppBootstrap';
+import { SiteProvider } from './site/SiteProvider';
 import './styles/marketing.css';
 import './styles/app.css';
-ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode><Provider store={store}><AppBootstrap><RouterProvider router={router} /></AppBootstrap></Provider></React.StrictMode>);
+ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode><Provider store={store}><AppBootstrap><SiteProvider><RouterProvider router={router} /></SiteProvider></AppBootstrap></Provider></React.StrictMode>);
