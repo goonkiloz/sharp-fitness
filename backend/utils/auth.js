@@ -16,6 +16,7 @@ function safeUser(user) {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
+    phone: user.phone,
     isTrainer: Boolean(user.isTrainer)
   };
 }

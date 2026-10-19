@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     firstName: { type: DataTypes.STRING, allowNull: false },
     lastName: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true, validate: { isEmail: true } },
+    phone: {type: DataTypes.STRING, allowNull: true},
     hashedPassword: { type: DataTypes.STRING, allowNull: false },
     stripeCustomerId: { type: DataTypes.STRING, allowNull: true },
     isTrainer: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
